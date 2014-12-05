@@ -34,12 +34,12 @@
 		var spawnLocations = [[1,530],[1260,530]];
 
 		// random stuff
-		var health = 100;
 		var score = 0;
 		var randNum;
 		var key1;
 		var x;
 		var y;
+		var jetpack;
 
 		function create() {
 			// timeStart = game.time.now;
@@ -81,6 +81,7 @@
 			game.physics.arcade.enable(player);
 			player.health = 100;
 			player.ammo = 100;
+			console.log(player);
 
 			// adding gravity to player
 			player.body.gravity.y = 400;
@@ -97,9 +98,9 @@
 			// Spawns powerups every ten seconds
 			timer = game.time.events.repeat(Phaser.Timer.SECOND * 10, 50, spawnPowerUp);
 			// changes the location of the powerup every five seconds
-			timer = game.time.events.repeat(Phaser.Timer.SECOND * 1, 50, changeRand);
+			timer = game.time.events.repeat(Phaser.Timer.SECOND * 0.5, 50, changeRand);
 			// Spawns enemies
-			timer = game.time.events.repeat(Phaser.Timer.SECOND * 2, 50, spawnEnemy);
+			timer = game.time.events.repeat(Phaser.Timer.SECOND * 1, 50, spawnEnemy);
 
 			// Activates keyboard
 			cursors = game.input.keyboard.createCursorKeys();
@@ -107,16 +108,17 @@
 			// Displays score in top left corner and health in right top corner
 			scoreText = game.add.text(10, 10, 'Score: 0');
 			ammoText = game.add.text(1110, 10, "Ammo: " + player.ammo);
-			testText = game.add.text(640, 10, "x,y")
+			healthText = game.add.text(500, 10, "Health: " + player.health + "%")
 
 			key1 = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
 		}
 
 		function update() {
-			var x = Math.round(player.x);
-			var y = Math.round(player.y);
-			testText.text = x + "," + y;
+			healthText.text = "Health: " + player.health + "%";
+			// var x = Math.round(player.x);
+			// var y = Math.round(player.y);
+			// testText.text = x + "," + y;
 
 		    //  Collide the player with objects in game
 		    game.physics.arcade.collide(player, platforms);
@@ -125,7 +127,7 @@
 		    game.physics.arcade.collide(player, enemies, enemyHurtsPlayer);
 
 		    game.physics.arcade.overlap(player, healthkits, collectHealth, null, this);
-		    game.physics.arcade.overlap(player, enemies, enemyKillsPlayer, null, this);
+		    game.physics.arcade.overlap(player, enemies, enemyHurtsPlayer, null, this);
 
 		    //  Reset the players velocity (movement)
 		    player.body.velocity.x = 0;
@@ -177,11 +179,11 @@
 		}
 
 		function spawnPowerUp() {
-			if (randNum < 0.33)
+			if (randNum < 0.40)
 			{
 				var kit = healthkits.create(locations[0][0], locations[0][1], 'healthKit');
 			}
-			else if (randNum > 0.33 && randNum < 0.66)
+			else if (randNum > 0.39 && randNum < 0.85)
 			{
 				var kit = healthkits.create(locations[1][0], locations[1][1], 'healthKit');
 			}
@@ -200,18 +202,19 @@
 			if (randNum <= 0.5)
 			{
 				var enemy = enemies.create(spawnLocations[0][0], spawnLocations[0][1], 'enemy_left');
-				enemy.body.velocity.x = 150;
+				enemy.body.velocity.x = 300;
 			}else if (randNum > 0.5)
 			{
 				var enemy = enemies.create(spawnLocations[1][0], spawnLocations[1][1], 'enemy_right');
-				enemy.body.velocity.x = -150;
+				enemy.body.velocity.x = -300;
 			}
 			enemy.body.gravity.y = 300;
 		}
 
-		function enemyHurtsPlayer(){
-			this.kill();
+		function enemyHurtsPlayer(player, enemy){
+			enemy.kill();
 			player.health -= 25;
+			console.log(player);
 			if (player.health <= 0){
 				player.kill();
 			};
