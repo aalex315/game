@@ -29,6 +29,7 @@
 		var healthText;
 		var randomText;
 		var timeText;
+		var ammoText;
 
 		// platform coordinates
 		var locations = [[175,400],[525,350],[975,375]];
@@ -37,9 +38,8 @@
 		var health = 100;
 		var score = 0;
 		var randNum;
-		var weighting;
+
 		// For timer
-		var timer;
 		var time;
 		var lastUpdate;
 		var timeStart;
@@ -90,36 +90,35 @@
 			game.physics.arcade.enable(enemy);
 			enemy.body.gravity.y = 400;
 			enemy.body.collideWorldBounds = true;
-			// adding bounce and gravity to player
-			// player.body.bounce.y = 0.15;
+
+			// adding gravity to player
 			player.body.gravity.y = 400;
 			player.body.collideWorldBounds = true;
 
 			// Animations for player
 			player.animations.add('left', [2,3,4], 10, true);
 			player.animations.add('right', [5,6,7], 10, true);
-			// enemy.animations.add('left', [,1,2,3], 10, true);
-			// enemy.animations.add('right', [5,6,7,8], 10, true);
 
 			//Adding healthkits
 			healthkits = game.add.group();
 			healthkits.enableBody = true;
 
-			timer = game.time.events.repeat(weighting, 50, spawnPowerUp(), 'healthKit');
-			//var healthKit = healthkits.create(975, 375, 'healthKit');
+			// Spawns powerups every ten seconds
+			timer = game.time.events.repeat(Phaser.Timer.SECOND * 10, 50, spawnPowerUp);
+			// changes the location of the powerup every five seconds
+			timer = game.time.events.repeat(Phaser.Timer.SECOND * 5, 50, changeRand);
 
 			// Activates keyboard
 			cursors = game.input.keyboard.createCursorKeys();
 
 			// Displays score in top left corner and health in right top corner
-			scoreText = game.add.text(10, 10, 'Score: 0', { fontSize: '32px', fill: '#000' });
-			healthText = game.add.text(1110, 10, 'Health: ' + player.health + "%", { fontSize: '32px', fill: '#000'});
-			timeText = game.add.text(500,10, time, {fontSize: '32px', fill: '#000'});
-			// randomText = game.add.text(700, 10, randNum, {fontSize: '32px', fill: '#000'})
+			scoreText = game.add.text(10, 10, 'Score: 0');
+			healthText = game.add.text(1110, 10, 'Health: ' + player.health + "%");
+			timeText = game.add.text(500,10, time);
+			ammoText = game.add.text(1110, 40, "Ammo: " + player.ammo);
 		}
 
 		function update() {
-			updateWeight();
 			// currentTime = game.time.elapsedSince(timeStart);
 			// time = Math.round(currentTime/1000);
 			// timeText.text = time;
@@ -184,12 +183,7 @@
 				healthText.text = "Health: " + player.health + "%";
 			};
 		}
-		 // Counts the time
-		// setInterval(function(){
 
-		// }, 1000) 
-
-		// Spawns random power up at a random platform
 		function spawnPowerUp() {
 			if (randNum < 0.33)
 			{
@@ -206,16 +200,12 @@
 			kit.body.gravity.y = 300;
 		}
 
+		function changeRand() {
+			randNum = Math.random();
+		}
+
 		function enemyKillsPlayer(){
 			player.kill();
-		}
-		
-		function updateWeight(){
-			if(weighting > 700){
-				weighting -= 100;
-				timer.delay = weighting;
-				scoreText.text = timer.delay;
-			}
 		}
 		</script>
 	</body>
