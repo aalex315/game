@@ -37,17 +37,17 @@
 		var health = 100;
 		var score = 0;
 		var randNum;
-
+		var weighting;
 		// For timer
+		var timer;
 		var time;
 		var lastUpdate;
 		var timeStart;
 		var currentTime;
 
 		function create() {
-			timeStart = game.time.now;
-			var lastUpdate = 0;
-			console.log();
+			// timeStart = game.time.now;
+			// var lastUpdate = 0;
 
 			randNum = Math.random();
 			//Enabling physics
@@ -105,8 +105,8 @@
 			healthkits = game.add.group();
 			healthkits.enableBody = true;
 
+			timer = game.time.events.repeat(weighting, 50, spawnPowerUp(), 'healthKit');
 			//var healthKit = healthkits.create(975, 375, 'healthKit');
-			spawnPowerUp();
 
 			// Activates keyboard
 			cursors = game.input.keyboard.createCursorKeys();
@@ -119,13 +119,14 @@
 		}
 
 		function update() {
-			currentTime = game.time.elapsedSince(timeStart);
-			time = Math.round(currentTime/1000);
-			timeText.text = time;
+			updateWeight();
+			// currentTime = game.time.elapsedSince(timeStart);
+			// time = Math.round(currentTime/1000);
+			// timeText.text = time;
 
-			if (game.time.elapsedSince(lastUpdate) > 1){
-				spawnPowerUp();
-			};
+			// if (game.time.elapsedSince(lastUpdate) > 1){
+			// 	spawnPowerUp();
+			// };
 			
 		    //  Collide the player with objects in game
 		    game.physics.arcade.collide(player, platforms);
@@ -207,6 +208,14 @@
 
 		function enemyKillsPlayer(){
 			player.kill();
+		}
+		
+		function updateWeight(){
+			if(weighting > 700){
+				weighting -= 100;
+				timer.delay = weighting;
+				scoreText.text = timer.delay;
+			}
 		}
 		</script>
 	</body>
