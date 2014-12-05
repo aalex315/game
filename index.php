@@ -11,7 +11,6 @@
 		function preload() {
 
 			game.load.spritesheet('player', 'assets/player/player2.png',51,46);
-			// game.load.spritesheet('enemy', 'assets/enemies/enemy.png', 32, 48);
 			game.load.image('enemy', 'assets/enemies/blob.png');			
 			game.load.image('ground','assets/world/ground.png');
 			game.load.image('healthKit','assets/items/firstaid.png');
@@ -27,9 +26,8 @@
 		// text objects
 		var scoreText;
 		var healthText;
-		var randomText;
-		var timeText;
 		var ammoText;
+		var testText;
 
 		// platform coordinates
 		var locations = [[175,400],[525,350],[975,375]];
@@ -38,12 +36,9 @@
 		var health = 100;
 		var score = 0;
 		var randNum;
-
-		// For timer
-		var time;
-		var lastUpdate;
-		var timeStart;
-		var currentTime;
+		var key1;
+		var x;
+		var y;
 
 		function create() {
 			// timeStart = game.time.now;
@@ -114,19 +109,18 @@
 			// Displays score in top left corner and health in right top corner
 			scoreText = game.add.text(10, 10, 'Score: 0');
 			healthText = game.add.text(1110, 10, 'Health: ' + player.health + "%");
-			timeText = game.add.text(500,10, time);
 			ammoText = game.add.text(1110, 40, "Ammo: " + player.ammo);
+			testText = game.add.text(640, 10, "x,y")
+
+			key1 = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
 		}
 
 		function update() {
-			// currentTime = game.time.elapsedSince(timeStart);
-			// time = Math.round(currentTime/1000);
-			// timeText.text = time;
+			var x = Math.round(player.x);
+			var y = Math.round(player.y);
+			testText.text = x + "," + y;
 
-			// if (game.time.elapsedSince(lastUpdate) > 1){
-			// 	spawnPowerUp();
-			// };
-			
 		    //  Collide the player with objects in game
 		    game.physics.arcade.collide(player, platforms);
 		    game.physics.arcade.collide(platforms, healthkits);
@@ -202,6 +196,10 @@
 
 		function changeRand() {
 			randNum = Math.random();
+		}
+
+		function enemyAI() {
+
 		}
 
 		function enemyKillsPlayer(){
