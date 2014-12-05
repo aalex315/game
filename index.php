@@ -17,6 +17,8 @@
 			game.load.image('healthKit','assets/items/firstaid.png');
 			game.load.image('b_platform', 'assets/world/brick_platform.png');
 			game.load.image('c_platform', 'assets/world/cobble_platform.png');
+			game.load.image('jetpack', 'assets/items/jetpack.png');
+			game.load.image('bullet', 'assets/items/bullet.png');
 
 		}
 		// objects
@@ -36,10 +38,11 @@
 		// random stuff
 		var score = 0;
 		var randNum;
-		var key1;
+		var spaceKey;
 		var x;
 		var y;
 		var jetpack;
+		var facing;
 
 		function create() {
 			// timeStart = game.time.now;
@@ -80,7 +83,6 @@
 			player = game.add.sprite(640, game.world.height - 150, 'player');
 			game.physics.arcade.enable(player);
 			player.health = 100;
-			player.ammo = 100;
 			console.log(player);
 
 			// adding gravity to player
@@ -94,6 +96,9 @@
 			//Adding healthkits
 			healthkits = game.add.group();
 			healthkits.enableBody = true;
+
+			bullets = game.add.group();
+			bullets.enableBody = true;
 
 			// Spawns powerups every ten seconds
 			timer = game.time.events.repeat(Phaser.Timer.SECOND * 10, 50, spawnPowerUp);
@@ -110,7 +115,7 @@
 			ammoText = game.add.text(1110, 10, "Ammo: " + player.ammo);
 			healthText = game.add.text(500, 10, "Health: " + player.health + "%")
 
-			key1 = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+			spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
 		}
 
@@ -120,31 +125,33 @@
 			// var y = Math.round(player.y);
 			// testText.text = x + "," + y;
 
-		    //  Collide the player with objects in game
+		    //  Collisions
 		    game.physics.arcade.collide(player, platforms);
 		    game.physics.arcade.collide(platforms, healthkits);
 		    game.physics.arcade.collide(enemies, platforms);
 		    game.physics.arcade.collide(player, enemies, enemyHurtsPlayer);
 
+		    // Overlaps for collecting objects
 		    game.physics.arcade.overlap(player, healthkits, collectHealth, null, this);
 		    game.physics.arcade.overlap(player, enemies, enemyHurtsPlayer, null, this);
 
 		    //  Reset the players velocity (movement)
 		    player.body.velocity.x = 0;
 
+		    // Controls
 		    if (cursors.left.isDown)
 		    {
-		        //  Move to the left
 		        player.body.velocity.x = -150;
 
 		        player.animations.play('left');
+		        facing = "left";
 		    }
 		    else if (cursors.right.isDown)
 		    {
-		        //  Move to the right
 		        player.body.velocity.x = 150;
 
 		        player.animations.play('right');
+		        facing = "right";
 		    }
 		    else
 		    {
@@ -154,6 +161,10 @@
 		        player.frame = 0;
 		    }
 		    
+		    if (spaceKey.isDown) {
+		    	shoot();
+		    }
+
 		     // Allow the player to jump if they are touching the ground.
 		    if (cursors.up.isDown && player.body.touching.down)
 		    {
@@ -175,7 +186,7 @@
 					player.health = 100;
 				};
 				healthText.text = "Health: " + player.health + "%";
-			};
+			}
 		}
 
 		function spawnPowerUp() {
@@ -218,6 +229,28 @@
 			if (player.health <= 0){
 				player.kill();
 			};
+		}
+
+		var shotTimer = 0;
+		function shoot() {
+			if (shotTimer < game.time.now) {
+				shotTimer = game.time.now +275;
+				var bullet;
+				if (facing = "right"){
+					bullet = bullets.create(player.body.x + player.body.width / 2 + 20, player.body.y + player.body.y / 2 - 4, 'bullet');
+				}else {
+					bullet = bullets.create(player.body.x + player.body.width / 2 - 20, player.body.y + player.body.y / 2 - 4, 'bullet');
+				}
+				bullet.outOfBoundsKill = true;
+				bullet.anchor.setTo(0.5, 0.5);
+				bullet.body.velocity.y = 0;
+				if (facing == "right"){
+					bullet.body.velocity.x = -400;
+				} else {
+					bullet.body.velocity.x = -400;
+				}
+				console.log(facing);
+			}
 		}
 		</script>
 	</body>
