@@ -11,7 +11,8 @@
 		function preload() {
 
 			game.load.spritesheet('player', 'assets/player/player2.png',51,46);
-			game.load.image('enemy', 'assets/enemies/blob.png');			
+			game.load.image('enemy_left', 'assets/enemies/blob_left.png');			
+			game.load.image('enemy_right', 'assets/enemies/blob_right.png');			
 			game.load.image('ground','assets/world/ground.png');
 			game.load.image('healthKit','assets/items/firstaid.png');
 			game.load.image('b_platform', 'assets/world/brick_platform.png');
@@ -20,7 +21,6 @@
 		}
 		// objects
 		var player;
-		var enemies;
 		var platforms;
 		var cursors;
 		// text objects
@@ -31,6 +31,7 @@
 
 		// platform coordinates
 		var locations = [[175,400],[525,350],[975,375]];
+		var spawnLocations = [[1,530],[1260,530]];
 
 		// random stuff
 		var health = 100;
@@ -78,13 +79,8 @@
 			// Create player
 			player = game.add.sprite(640, game.world.height - 150, 'player');
 			game.physics.arcade.enable(player);
-			player.health = 60;
+			player.health = 100;
 			player.ammo = 100;
-
-			var enemy = enemies.create(100, game.world.height - 150, 'enemy');
-			game.physics.arcade.enable(enemy);
-			enemy.body.gravity.y = 400;
-			enemy.body.collideWorldBounds = true;
 
 			// adding gravity to player
 			player.body.gravity.y = 400;
@@ -101,15 +97,16 @@
 			// Spawns powerups every ten seconds
 			timer = game.time.events.repeat(Phaser.Timer.SECOND * 10, 50, spawnPowerUp);
 			// changes the location of the powerup every five seconds
-			timer = game.time.events.repeat(Phaser.Timer.SECOND * 5, 50, changeRand);
+			timer = game.time.events.repeat(Phaser.Timer.SECOND * 1, 50, changeRand);
+			// Spawns enemies
+			timer = game.time.events.repeat(Phaser.Timer.SECOND * 2, 50, spawnEnemy);
 
 			// Activates keyboard
 			cursors = game.input.keyboard.createCursorKeys();
 
 			// Displays score in top left corner and health in right top corner
 			scoreText = game.add.text(10, 10, 'Score: 0');
-			healthText = game.add.text(1110, 10, 'Health: ' + player.health + "%");
-			ammoText = game.add.text(1110, 40, "Ammo: " + player.ammo);
+			ammoText = game.add.text(1110, 10, "Ammo: " + player.ammo);
 			testText = game.add.text(640, 10, "x,y")
 
 			key1 = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -125,6 +122,7 @@
 		    game.physics.arcade.collide(player, platforms);
 		    game.physics.arcade.collide(platforms, healthkits);
 		    game.physics.arcade.collide(enemies, platforms);
+		    game.physics.arcade.collide(player, enemies, enemyHurtsPlayer);
 
 		    game.physics.arcade.overlap(player, healthkits, collectHealth, null, this);
 		    game.physics.arcade.overlap(player, enemies, enemyKillsPlayer, null, this);
@@ -198,12 +196,29 @@
 			randNum = Math.random();
 		}
 
-		function enemyAI() {
-
+		function spawnEnemy() {
+			if (randNum <= 0.5)
+			{
+				var enemy = enemies.create(spawnLocations[0][0], spawnLocations[0][1], 'enemy_left');
+				enemy.body.velocity.x = 150;
+			}else if (randNum > 0.5)
+			{
+				var enemy = enemies.create(spawnLocations[1][0], spawnLocations[1][1], 'enemy_right');
+				enemy.body.velocity.x = -150;
+			}
+			enemy.body.gravity.y = 300;
 		}
 
 		function enemyKillsPlayer(){
 			player.kill();
+		}
+
+		function enemyHurtsPlayer(){
+			this.kill();
+			player.health -= 25;
+			if (player.health <= 0){
+				player.kill();
+			};
 		}
 		</script>
 	</body>
