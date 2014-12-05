@@ -209,10 +209,6 @@
 			enemy.body.gravity.y = 300;
 		}
 
-		function enemyKillsPlayer(){
-			player.kill();
-		}
-
 		function enemyHurtsPlayer(){
 			this.kill();
 			player.health -= 25;
