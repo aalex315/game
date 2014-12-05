@@ -105,7 +105,7 @@
 			// changes the location of the powerup every five seconds
 			timer = game.time.events.repeat(Phaser.Timer.SECOND * 0.5, 50, changeRand);
 			// Spawns enemies
-			timer = game.time.events.repeat(Phaser.Timer.SECOND * 1, 50, spawnEnemy);
+			// timer = game.time.events.repeat(Phaser.Timer.SECOND * 1, 50, spawnEnemy);
 
 			// Activates keyboard
 			cursors = game.input.keyboard.createCursorKeys();
@@ -173,7 +173,7 @@
 		}
 
 		function collectHealth(player, healthKit) {
-			//Removes the kit from the screen
+			//Removes the kit from the screen 
 			healthKit.kill();
 
 			// If user has less then 100 health then give him +10
@@ -237,19 +237,18 @@
 				shotTimer = game.time.now +275;
 				var bullet;
 				if (facing = "right"){
-					bullet = bullets.create(player.body.x + player.body.width / 2 + 20, player.body.y + player.body.y / 2 - 4, 'bullet');
+					bullet = bullets.create(player.body.x + 50, player.body.y + 25, 'bullet');
 				}else {
-					bullet = bullets.create(player.body.x + player.body.width / 2 - 20, player.body.y + player.body.y / 2 - 4, 'bullet');
+					bullet = bullets.create(player.body.x, player.body.y + 25, 'bullet');
 				}
 				bullet.outOfBoundsKill = true;
 				bullet.anchor.setTo(0.5, 0.5);
 				bullet.body.velocity.y = 0;
-				if (facing == "right"){
-					bullet.body.velocity.x = -400;
-				} else {
+				if (facing === "right"){
+					bullet.body.velocity.x = 400;
+				} else if(facing === "left") {
 					bullet.body.velocity.x = -400;
 				}
-				console.log(facing);
 			}
 		}
 		</script>
